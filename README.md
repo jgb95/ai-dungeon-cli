@@ -94,6 +94,17 @@ prompt: 'me: '
 ```
 
 
+#### Slow Typing Animation
+
+By default, responses are printed to the screen instantly.
+
+To enable a fun "slow" typing animation, use:
+
+```yaml
+slow: true
+```
+
+
 ## Dependencies
 
 Please have a look at [requirements.txt](./requirements.txt).
