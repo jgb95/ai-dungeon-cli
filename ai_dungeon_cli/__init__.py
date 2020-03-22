@@ -44,7 +44,6 @@ def exists(cfg: Dict[str, str], key: str) -> str:
 # UTILS: TERMINAL
 
 # allow unbuffered output for slow typing effect
-# from: https://mail.python.org/pipermail/tutor/2003-November/026645.html
 class Unbuffered(object):
    def __init__(self, stream):
        self.stream = stream
