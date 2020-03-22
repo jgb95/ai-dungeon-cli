@@ -44,7 +44,6 @@ def exists(cfg: Dict[str, str], key: str) -> str:
 # UTILS: TERMINAL
 
 # allow unbuffered output for slow typing effect
-# from: https://mail.python.org/pipermail/tutor/2003-November/026645.html
 class Unbuffered(object):
    def __init__(self, stream):
        self.stream = stream
@@ -98,6 +97,11 @@ def set_print_handler(method: Callable[[str], None]):
     print_handler = method
 
 
+def set_story_print_handler(method: Callable[[str], None]):
+    global story_print_handler
+    story_print_handler = method
+
+
 def get_user_input_term(prompt: str = '') -> str:
     user_input = input(prompt)
     print()
@@ -109,7 +113,7 @@ def print_output_term(text: str):
     print()
 
 
-def print_slow_term(text: str):
+def print_output_term_slow_effect(text: str):
     for line in textwrap.wrap(text, terminal_width):
         for letter in line:
             print(letter, end='')
@@ -117,8 +121,10 @@ def print_slow_term(text: str):
         print()
     print()
 
+
 input_handler = get_user_input_term
 print_handler = print_output_term
+story_print_handler = print_output_term
 
 
 # -------------------------------------------------------------------------
@@ -128,7 +134,6 @@ class AiDungeon:
     def __init__(self):
 
         # Variables initialization
-        self.slow: bool = False
         self.prompt: str = "> "
         self.auth_token: str = None
         self.email: str = None
@@ -178,8 +183,8 @@ class AiDungeon:
             )
             raise FailedConfiguration
 
-        if exists(cfg, "slow"):
-            self.slow = cfg["slow"]
+        if exists(cfg, "slow_typing_effect"):
+            set_story_print_handler(print_output_term_slow_effect)
         if exists(cfg, "prompt"):
             self.prompt = cfg["prompt"]
         if exists(cfg, "auth_token"):
@@ -309,13 +314,7 @@ class AiDungeon:
         self.public_id = story_response["publicId"]
 
         story_pitch = story_response["story"][0]["value"]
-
-        if self.slow:
-            print_handler = print_slow_term
-        
-        print_handler(story_pitch)
-
-        print_handler = print_output_term
+        story_print_handler(story_pitch)
 
     # Function for when the input typed was ordinary
     def process_regular_action(self, user_input: str):
@@ -325,14 +324,9 @@ class AiDungeon:
         )
         r.raise_for_status()
         action_res = r.json()
+
         action_res_str = action_res[self.prompt_iteration]["value"]
-
-        if self.slow:
-            print_handler = print_slow_term
-        
-        print_handler(action_res_str)
-
-        print_handler = print_output_term
+        story_print_handler(action_res_str)
 
     # Function for when /remember is typed
     def process_remember_action(self, user_input: str):
