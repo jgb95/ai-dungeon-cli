@@ -101,7 +101,7 @@ By default, responses are printed to the screen instantly.
 To enable a fun "slow" typing animation, use:
 
 ```yaml
-slow: true
+slow_typing_effect: True
 ```
 
 
